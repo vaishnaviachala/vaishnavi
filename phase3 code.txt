@@ -1,0 +1,41 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.ensemble import IsolationForest
+
+# Simulate energy consumption data (hourly for 30 days)
+np.random.seed(42)
+hours = pd.date_range(start='2023-04-01', periods=30*24, freq='H')
+baseline_usage = 2 + np.sin(np.linspace(0, 20, len(hours)))  # base trend
+random_noise = np.random.normal(0, 0.3, len(hours))
+consumption = baseline_usage + random_noise
+
+# Inject anomalies (simulating faults/inefficiencies)
+anomalies_idx = np.random.choice(len(hours), 10, replace=False)
+consumption[anomalies_idx] += np.random.uniform(2, 4, size=10)  # high spikes
+
+# Create DataFrame
+df = pd.DataFrame({'timestamp': hours, 'energy_kWh': consumption})
+df.set_index('timestamp', inplace=True)
+
+# Train anomaly detection model
+model = IsolationForest(contamination=0.01)
+df['anomaly'] = model.fit_predict(df[['energy_kWh']])
+df['is_anomaly'] = df['anomaly'] == -1
+
+# Optimization suggestion: shift peak loads to non-peak hours
+peak_threshold = df['energy_kWh'].mean() + df['energy_kWh'].std()
+df['suggestion'] = np.where(df['energy_kWh'] > peak_threshold, 'Reduce usage / reschedule tasks', 'Normal')
+
+# Plot
+plt.figure(figsize=(14, 6))
+plt.plot(df.index, df['energy_kWh'], label='Energy Usage (kWh)', color='blue')
+plt.scatter(df[df['is_anomaly']].index, df[df['is_anomaly']]['energy_kWh'], color='red', label='Anomalies')
+plt.axhline(y=peak_threshold, color='orange', linestyle='--', label='Optimization Threshold')
+plt.title('Energy Consumption with Anomalies and Optimization Insights')
+plt.xlabel('Timestamp')
+plt.ylabel('Energy (kWh)')
+plt.legend()
+plt.tight_layout()
+plt.grid(True)
+plt.show()
