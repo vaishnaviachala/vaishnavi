@@ -1,0 +1,33 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# Simulated dataset
+data = {
+    'temperature': [20, 22, 24, 26, 28, 30, 32],
+    'energy_usage': [300, 320, 340, 370, 390, 420, 450]
+}
+df = pd.DataFrame(data)
+
+# Model training
+X = df[['temperature']]
+y = df['energy_usage']
+model = LinearRegression()
+model.fit(X, y)
+
+# Prediction
+future_temps = np.array([33, 34, 35]).reshape(-1, 1)
+predictions = model.predict(future_temps)
+
+# Plotting
+plt.figure(figsize=(8, 5))
+plt.scatter(df['temperature'], df['energy_usage'], color='blue', label='Actual Usage')
+plt.plot(df['temperature'], model.predict(X), color='green', label='Regression Line')
+plt.scatter(future_temps, predictions, color='red', label='Predicted Usage')
+plt.xlabel("Temperature (°C)")
+plt.ylabel("Energy Usage (kWh)")
+plt.title("Energy Consumption Prediction")
+plt.legend()
+plt.grid(True)
+plt.show()
