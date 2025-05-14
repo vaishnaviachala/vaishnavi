@@ -1,0 +1,23 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# Simulated historical energy load data (in kWh)
+hours = np.array(range(24)).reshape(-1, 1)  # Hours of the day
+load = np.array([30, 28, 25, 23, 22, 25, 30, 40, 55, 60, 65, 70, 75, 73, 70, 68, 65, 60, 55, 50, 45, 40, 35, 32])
+
+# Train a linear regression model
+model = LinearRegression()
+model.fit(hours, load)
+predicted = model.predict(hours)
+
+# Plotting
+plt.figure(figsize=(10, 5))
+plt.plot(hours, load, label='Actual Load', marker='o')
+plt.plot(hours, predicted, label='Predicted Load (Linear Regression)', linestyle='--')
+plt.xlabel('Hour of Day')
+plt.ylabel('Energy Load (kWh)')
+plt.title('Energy Load Prediction')
+plt.legend()
+plt.grid(True)
+plt.show()
