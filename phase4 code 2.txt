@@ -1,0 +1,23 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Sample energy usage (kWh) across 7 days before and after optimization
+days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+before = np.array([120, 130, 125, 135, 140, 150, 145])
+after = before * np.random.uniform(0.85, 0.92, size=7)  # Simulate 8-15% optimization
+
+# Plotting
+x = np.arange(len(days))
+width = 0.35
+
+fig, ax = plt.subplots(figsize=(10, 5))
+ax.bar(x - width/2, before, width, label='Before Optimization')
+ax.bar(x + width/2, after, width, label='After Optimization')
+
+ax.set_ylabel('Energy Usage (kWh)')
+ax.set_title('Energy Usage Before and After Optimization')
+ax.set_xticks(x)
+ax.set_xticklabels(days)
+ax.legend()
+plt.grid(True, axis='y')
+plt.show()
